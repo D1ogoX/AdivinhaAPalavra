@@ -40,22 +40,10 @@ namespace AdivinhaAPalavra.API.Models
 
             List<string> wordList = new List<string>();
             wordList = _dbConnection.ExecuteSelectQuery(query).AsEnumerable()
-                           .Select(r => r.Field<string>("word"))
+                           .Select(r => RemoveDiacritics(r.Field<string>("word").ToUpper()))
                            .ToList();
 
-            bool exists = false;
-
-            foreach(string _word in wordList)
-            {
-                if (RemoveDiacritics(_word.ToUpper()) == word.ToUpper())
-                {
-                    exists = true;
-
-                    break;
-                }
-            }
-
-            return exists;
+            return wordList.BinarySearch(word.ToUpper()) != 0 ? true : false;
         }
 
         public string createMatch()
