@@ -1,0 +1,331 @@
+﻿@page
+@model IndexModel
+@{
+    int iNumberOfTries = 6;
+}
+
+<head>
+    <style>
+        /* Estilo para os botões do teclado */
+        .keyboard-button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<h1 class="text-center">Adivinha a palavra!</h1>
+
+<input type="hidden" id="word" name="word" value="@Model.word"/>
+
+<div class="container">
+    <div class="col-auto">
+        
+        @for (int i = 0; i < iNumberOfTries; i++)
+        {
+            <div class="row justify-content-center">
+                @{ string disabled = i > 0 ? "disabled" : ""; }
+                
+                @for (int h = 0; h < 5; h++)
+                {
+                    string name = "letter_" + h + "_try_" + i;
+                    <input type="text" class="form-control text-uppercase mx-1" id="@name" name="@name" maxlength="1" onkeyup="changeTextBox(@h, @i, event)" style="width: 5em; text-align: center;" @disabled />
+                    
+                }
+            </div>
+            <br />
+        }
+    </div>
+    <br />
+</div>
+
+<div class="keyboard-container">
+    <!-- Linha 1 do teclado -->
+    <div class="row">
+        <div class="col text-center">
+            <button id="Q" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">Q</button>
+            <button id="W" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">W</button>
+            <button id="E" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">E</button>
+            <button id="R" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">R</button>
+            <button id="T" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">T</button>
+            <button id="Y" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">Y</button>
+            <button id="U" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">U</button>
+            <button id="I" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">I</button>
+            <button id="O" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">O</button>
+            <button id="P" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">P</button>
+        </div>
+    </div>
+    <!-- Linha 2 do teclado -->
+    <div class="row">
+        <div class="col text-center">
+            <button id="A" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">A</button>
+            <button id="S" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">S</button>
+            <button id="D" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">D</button>
+            <button id="F" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">F</button>
+            <button id="G" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">G</button>
+            <button id="H" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">H</button>
+            <button id="J" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">J</button>
+            <button id="K" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">K</button>
+            <button id="L" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">L</button>
+        </div>
+    </div>
+    <!-- Linha 3 do teclado -->
+    <div class="row">
+        <div class="col text-center">
+            <button id="Z" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">Z</button>
+            <button id="X" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">X</button>
+            <button id="C" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">C</button>
+            <button id="V" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">V</button>
+            <button id="B" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">B</button>
+            <button id="N" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">N</button>
+            <button id="M" class="btn btn-light keyboard-button" onclick="AddLetter(this.textContent)">M</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var elementoComFoco = document.activeElement;
+
+    var _row = 0;
+    var _currentLetter = 0;
+
+    function AddLetter(letter)
+    {
+        // Verifica se o elemento é um input
+        if (elementoComFoco.tagName === 'INPUT') {
+            // Se for um input, exibe seu ID
+            elementoComFoco.value = letter;
+
+            var nextLetter = _currentLetter + 1;
+
+            var name = "letter_" + nextLetter + "_try_" + _row;
+
+            _currentLetter = nextLetter;
+
+            document.getElementById(name).focus();
+            elementoComFoco = document.getElementById(name);
+        }
+    }
+
+    function Focus() {
+        console.log('O DOM está pronto!');
+
+        var name = "letter_0_try_0";
+
+        document.getElementById(name).focus();
+        elementoComFoco = document.getElementById(name);
+    }
+
+    // Adicione um ouvinte de evento para o evento 'DOMContentLoaded'
+    document.addEventListener('DOMContentLoaded', Focus);
+
+    function changeTextBox(letter, row, event)
+    {
+        if (event.keyCode === 13) {
+
+            checkWord(row);
+        } else {
+            if (isAlphabeticKey(event))
+            {
+                var nextLetter = letter + 1;
+
+                if (nextLetter >= 5) {
+                    nextLetter = 0;
+                }
+
+                var name = "letter_" + nextLetter + "_try_" + row;
+
+                _row = row;
+                _currentLetter = nextLetter;
+
+                document.getElementById(name).focus();
+                elementoComFoco = document.getElementById(name);
+            }
+
+            else
+            {
+                if (event.keyCode === 8)
+                {
+                    var firstName = "letter_" + letter + "_try_" + row;
+
+                    if (document.getElementById(firstName).value == "")
+                    {
+                        var nextLetter = letter - 1;
+
+                        if (nextLetter < 0) {
+                            nextLetter = 5;
+                        }
+
+                        var name = "letter_" + nextLetter + "_try_" + row;
+
+                        _row = row;
+                        _currentLetter = nextLetter;
+
+                        document.getElementById(name).focus();
+                        document.getElementById(name).value = "";
+                        elementoComFoco = document.getElementById(name);
+                    }
+                }
+            }
+        }
+    }
+
+    function isAlphabeticKey(event) {
+        return /^[a-zA-Z]$/.test(event.key);
+    }
+
+    async function checkWord(row) {
+        var word = "";
+
+        var inputs = document.querySelectorAll('[id*=try_' + row + ']');
+        inputs.forEach(function (input) {
+            word += input.value;
+        });
+
+        if ((String(await checkWordExists(word)).toLowerCase() === 'false')) {
+            alert("A palavra não está registada!");
+            return;
+        }
+
+        if (word.length == 5)
+        {
+            var matchId = document.getElementById('word').value;
+            var correctWord = await getWord(matchId);
+
+            word = word.toUpperCase();
+            correctWord = correctWord.toUpperCase();
+
+            var i = 0;
+            var correctLetters = [];
+            var j = 0;
+
+            //Validates the correct letters in the word
+            inputs.forEach(function (input) {
+                if (input.value.toUpperCase() == correctWord[i]) {
+                    correctLetters[j] = input.value.toUpperCase();
+                    j++;
+                } 
+                i++;
+            });
+
+            i = 0;
+            inputs.forEach(function (input) {
+            //Validate if the letter is correct
+            if (input.value.toUpperCase() == correctWord[i]) {
+                input.style.backgroundColor = 'green';
+                input.style.color = 'white';
+
+                document.getElementById(input.value.toUpperCase()).style.backgroundColor = 'green';
+                document.getElementById(input.value.toUpperCase()).style.color = 'white';
+            } else {
+                //Validates if the correct word has that letter
+                if (correctWord.includes(input.value.toUpperCase())) {
+                    if (correctLetters.filter(x => x == input.value.toUpperCase()).length > 0) {
+                        //Validates if the word has more than 1 equal letter, for example "leite" has 2 "e", if the user enters 3 "e" and onde in right place 1 of then should appear
+                        //green and another yellow and the third one gray
+                        var letterCount = correctWord.split(input.value.toUpperCase()).length - 1;
+                        var letterCount2 = correctLetters.filter(x => x == input.value.toUpperCase()).length;
+                        if (letterCount > letterCount2) {
+                            input.style.backgroundColor = 'yellow';
+
+                            document.getElementById(input.value.toUpperCase()).style.backgroundColor = 'yellow';
+                            document.getElementById(input.value.toUpperCase()).style.color = 'black';
+                        }
+
+                        else{
+                            document.getElementById(input.value.toUpperCase()).style.backgroundColor = 'gray';
+                            document.getElementById(input.value.toUpperCase()).style.color = 'white';
+                        }
+                    }
+
+                    else
+                    {
+                        input.style.backgroundColor = 'yellow';
+
+                        document.getElementById(input.value.toUpperCase()).style.backgroundColor = 'yellow';
+                        document.getElementById(input.value.toUpperCase()).style.color = 'black';
+                    }
+                }
+
+                else
+                {
+                    document.getElementById(input.value.toUpperCase()).style.backgroundColor = 'gray';
+                    document.getElementById(input.value.toUpperCase()).style.color = 'white';
+                }
+            }
+
+            input.disabled = true;
+
+            i++;
+        });
+
+            inputs = document.querySelectorAll('[id*=try_' + (row+1) + ']');
+
+            i=0;
+            inputs.forEach(function (input) {
+                input.disabled = false;
+
+                i++;
+            });
+
+            if (word == correctWord) {
+                restartMatch(matchId);
+                alert("Sucesso!");
+                location.reload();
+            } else {
+                if (row < 5)
+                {
+                    var name = "letter_0_try_" + (row + 1);
+                    document.getElementById(name).focus();
+                }
+
+                else
+                {
+                    restartMatch(matchId);
+                    alert("Perdeu! A palavra era: " + correctWord);
+                    location.reload();
+                }
+            }
+        }
+    }
+
+    async function checkWordExists(word) {
+        try {
+            const response = await fetch('https://localhost:7156/api/word/word/check/' + word, {
+                mode: "cors",
+            });
+            const sessionValue = await response.text();
+            //console.log(sessionValue);
+            return sessionValue; // Return the value
+        } catch (error) {
+            console.error('Error fetching session value:', error);
+            return ""; // Return a default value or handle the error as needed
+        }
+    }
+
+    async function restartMatch(token)
+    {
+        fetch('https://localhost:7156/api/word/finish' + token, {
+            method: 'DELETE',
+            mode: "cors",
+        })
+    }
+
+    async function getWord(token)
+    {
+        try {
+            const response = await fetch('https://localhost:7156/api/word/word/' + token, {
+                mode: "cors",
+            });
+            const sessionValue = await response.text();
+            //console.log(sessionValue);
+            return sessionValue; // Return the value
+        } catch (error) {
+            console.error('Error fetching session value:', error);
+            return ""; // Return a default value or handle the error as needed
+        }
+    }
+</script>
