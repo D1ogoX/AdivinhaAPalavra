@@ -85,14 +85,69 @@
     </div>
 </div>
 
+<div class="modal" id="victoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Parabéns!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Você venceu!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="jogarNovamente()">Jogar denovo!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="loseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Que pena!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="loseModalPalavra">A palavra era: </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="jogarNovamente()">Jogar denovo!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="notRegistredModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Oops!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="loseModalPalavra">A palavra não está registada!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-light">Ok!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     var elementoComFoco = document.activeElement;
-
     var _correctWord = "";
 
     var _row = 0;
     var _currentLetter = 0;
+
+    function jogarNovamente()
+    {
+        location.reload();
+    }
 
     function AddLetter(letter)
     {
@@ -191,7 +246,7 @@
         });
 
         if ((String(await checkWordExists(word)).toLowerCase() === 'false')) {
-            alert("A palavra não está registada!");
+            $('#notRegistredModal').modal('show');
             return;
         }
 
@@ -204,9 +259,8 @@
             var matchId = document.getElementById('word').value;
 
             word = word.toUpperCase();
-            
-            var i = 0;
             var correctLetters = [];
+            var i = 0;
             var j = 0;
 
             //Validates the correct letters in the word
@@ -280,8 +334,7 @@
 
             if (word == correctWord) {
                 restartMatch(matchId);
-                alert("Sucesso!");
-                location.reload();
+                $('#victoryModal').modal('show');
             } else {
                 if (row < 5)
                 {
@@ -292,8 +345,8 @@
                 else
                 {
                     restartMatch(matchId);
-                    alert("Perdeu! A palavra era: " + correctWord);
-                    location.reload();
+                    document.getElementById('loseModalPalavra').innerHTML = "A palavra era: " + correctWord;
+                    $('#loseModal').modal('show');
                 }
             }
         }

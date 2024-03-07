@@ -36,14 +36,18 @@ namespace AdivinhaAPalavra.API.Models
 
         public bool checkWord(string word)
         {
-            string query = string.Format("SELECT word from words");
+            string query = string.Format("SELECT word from words ORDER BY word ASC");
 
             List<string> wordList = new List<string>();
             wordList = _dbConnection.ExecuteSelectQuery(query).AsEnumerable()
                            .Select(r => RemoveDiacritics(r.Field<string>("word").ToUpper()))
                            .ToList();
 
-            return wordList.BinarySearch(word.ToUpper()) != 0 ? true : false;
+            word = word.ToUpper();
+
+            int index = wordList.BinarySearch(word.ToUpper());
+
+            return index > 0 ? true : false;
         }
 
         public string createMatch()
